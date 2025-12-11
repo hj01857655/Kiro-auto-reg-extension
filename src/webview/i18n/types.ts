@@ -63,8 +63,8 @@ export interface Translations {
   settingsTitle: string;
   autoSwitch: string;
   autoSwitchDesc: string;
-  hideExpired: string;
-  hideExpiredDesc: string;
+  hideExhausted: string;
+  hideExhaustedDesc: string;
   headless: string;
   headlessDesc: string;
   verbose: string;
