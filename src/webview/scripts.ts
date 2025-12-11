@@ -30,6 +30,13 @@ export function generateWebviewScript(totalAccounts: number): string {
       vscode.postMessage({ command: 'toggleAutoSwitch', enabled });
     }
     
+    function toggleHideExpired(hide) {
+      setState({ hideExpired: hide });
+      document.querySelectorAll('.card.expired').forEach(card => {
+        card.style.display = hide ? 'none' : '';
+      });
+    }
+    
     function updateSetting(key, value) {
       vscode.postMessage({ command: 'updateSetting', key, value });
     }
@@ -45,6 +52,24 @@ export function generateWebviewScript(totalAccounts: number): string {
     
     function importToken() {
       vscode.postMessage({ command: 'importToken' });
+    }
+    
+    function showSsoImport() {
+      document.getElementById('ssoImportPanel')?.classList.add('visible');
+    }
+    
+    function hideSsoImport() {
+      document.getElementById('ssoImportPanel')?.classList.remove('visible');
+      document.getElementById('ssoTokenInput').value = '';
+    }
+    
+    function importSsoToken() {
+      const input = document.getElementById('ssoTokenInput');
+      const token = input?.value?.trim();
+      if (token) {
+        vscode.postMessage({ command: 'importSsoToken', token: token });
+        hideSsoImport();
+      }
     }
     
     function refresh() {
@@ -63,6 +88,18 @@ export function generateWebviewScript(totalAccounts: number): string {
       vscode.postMessage({ command: 'openUrl', url: url });
     }
     
+    function checkForUpdates() {
+      vscode.postMessage({ command: 'checkForUpdates' });
+    }
+    
+    function stopAutoReg() {
+      vscode.postMessage({ command: 'stopAutoReg' });
+    }
+    
+    function togglePauseAutoReg() {
+      vscode.postMessage({ command: 'togglePauseAutoReg' });
+    }
+    
     function copyToken(filename) {
       vscode.postMessage({ command: 'copyToken', email: filename });
     }
@@ -79,32 +116,17 @@ export function generateWebviewScript(totalAccounts: number): string {
       vscode.postMessage({ command: 'clearConsole' });
     }
     
-    // Dialog
-    function confirmDeleteExpired() {
-      pendingAction = { type: 'deleteExpired' };
-      const lang = document.body.dataset.lang || 'en';
-      const titles = { 
-        en: 'Delete Expired Accounts', ru: 'Удалить истёкшие', zh: '删除过期账户',
-        es: 'Eliminar expiradas', pt: 'Excluir expiradas', ja: '期限切れを削除',
-        de: 'Abgelaufene löschen', fr: 'Supprimer expirés', ko: '만료된 계정 삭제', hi: 'समाप्त हटाएं'
-      };
-      const texts = { 
-        en: 'Delete all expired accounts? This cannot be undone.',
-        ru: 'Удалить все истёкшие аккаунты? Это нельзя отменить.',
-        zh: '删除所有过期账户？此操作无法撤销。',
-        es: '¿Eliminar todas las cuentas expiradas? No se puede deshacer.',
-        pt: 'Excluir todas as contas expiradas? Não pode ser desfeito.',
-        ja: '期限切れのアカウントをすべて削除しますか？元に戻せません。',
-        de: 'Alle abgelaufenen Konten löschen? Kann nicht rückgängig gemacht werden.',
-        fr: 'Supprimer tous les comptes expirés ? Irréversible.',
-        ko: '만료된 모든 계정을 삭제하시겠습니까? 되돌릴 수 없습니다.',
-        hi: 'सभी समाप्त खाते हटाएं? यह पूर्ववत नहीं किया जा सकता।'
-      };
-      document.getElementById('dialogTitle').textContent = titles[lang] || titles.en;
-      document.getElementById('dialogText').textContent = texts[lang] || texts.en;
-      document.getElementById('dialogOverlay').classList.add('visible');
+    function copyLogs() {
+      const consoleBody = document.getElementById('consoleBody');
+      if (consoleBody) {
+        const logs = Array.from(consoleBody.querySelectorAll('.console-line'))
+          .map(el => el.textContent)
+          .join('\\n');
+        vscode.postMessage({ command: 'copyLogs', logs: logs });
+      }
     }
     
+    // Dialog
     function confirmDelete(filename) {
       pendingAction = { type: 'delete', filename };
       const lang = document.body.dataset.lang || 'en';
@@ -145,31 +167,9 @@ export function generateWebviewScript(totalAccounts: number): string {
       document.querySelectorAll('.filter-tab').forEach(tab => {
         tab.classList.toggle('active', tab.textContent.toLowerCase() === filter);
       });
-      applyFilters();
-    }
-    
-    function toggleHideExpired(hide) {
-      setState({ hideExpired: hide });
-      vscode.postMessage({ command: 'setHideExpired', hide });
-      applyFilters();
-    }
-    
-    function applyFilters() {
-      const state = getState();
-      const filter = state.filter || 'all';
-      const hideExpired = state.hideExpired || false;
-      
       document.querySelectorAll('.card').forEach(card => {
         const isExpired = card.classList.contains('expired');
-        let show = true;
-        
-        // Apply tab filter
-        if (filter === 'valid' && isExpired) show = false;
-        if (filter === 'expired' && !isExpired) show = false;
-        
-        // Apply hide expired checkbox
-        if (hideExpired && isExpired) show = false;
-        
+        const show = filter === 'all' || (filter === 'valid' && !isExpired) || (filter === 'expired' && isExpired);
         card.style.display = show ? '' : 'none';
       });
     }
@@ -198,13 +198,10 @@ export function generateWebviewScript(totalAccounts: number): string {
       const state = getState();
       if (state.compact) document.body.classList.add('compact');
       if (state.settingsOpen) document.getElementById('settingsPanel')?.classList.add('visible');
-      if (state.filter && state.filter !== 'all') filterAccounts(state.filter);
-      
-      // Sync hideExpired checkbox with initial state from server
-      const checkbox = document.getElementById('hideExpiredCheckbox');
-      if (checkbox && checkbox.checked) {
-        setState({ hideExpired: true });
-        applyFilters();
+      if (state.filter !== 'all') filterAccounts(state.filter);
+      if (state.hideExpired) {
+        toggleHideExpired(true);
+        document.getElementById('hideExpired')?.setAttribute('checked', 'checked');
       }
       
       // Auto-scroll console
