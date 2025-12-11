@@ -24,7 +24,6 @@ export const pt: Translations = {
   exportTip: 'Salvar todas as contas em arquivo JSON',
   running: 'Executando...',
   all: 'Todas',
-  hideExpired: 'Ocultar expiradas',
   byEmail: 'Por Email',
   byUsage: 'Por Uso',
   byExpiry: 'Por Expiração',
