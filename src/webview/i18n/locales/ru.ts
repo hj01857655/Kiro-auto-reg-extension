@@ -24,7 +24,6 @@ export const ru: Translations = {
   exportTip: 'Сохранить все аккаунты в JSON файл',
   running: 'Выполняется...',
   all: 'Все',
-  hideExpired: 'Скрыть истёкшие',
   byEmail: 'По email',
   byUsage: 'По usage',
   byExpiry: 'По сроку',

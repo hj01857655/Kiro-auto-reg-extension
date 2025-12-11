@@ -37,6 +37,7 @@ export interface WebviewProps {
   version?: string;
   language?: Language;
   availableUpdate?: { version: string; url: string } | null;
+  hideExpired?: boolean;
 }
 
 function parseAutoRegStatus(status: string): { progress: RegProgress | null; statusText: string; isRunning: boolean } {
