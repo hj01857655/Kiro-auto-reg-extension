@@ -13,6 +13,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from .register import AWSRegistration, generate_emails
+from .mail_handler import generate_email as gptmail_generate_email
 from core.config import get_config, save_config
 
 def get_setting(path, default=None):
@@ -79,8 +80,8 @@ def main():
     parser.add_argument('--no-headless', action='store_true', help='Show browser window (default)')
     parser.add_argument('--verbose', '-v', action='store_true', help='Verbose output')
     parser.add_argument('--email', type=str, help='Custom email to use')
-    parser.add_argument('--domain', type=str, default='whitebite.ru', help='Email domain')
-    parser.add_argument('--prefix', type=str, default='kiro_auto', help='Email prefix')
+    parser.add_argument('--domain', type=str, help='Email domain (ignored, GPTMail auto-assigns)')
+    parser.add_argument('--prefix', type=str, help='Email prefix for GPTMail')
     args = parser.parse_args()
     
     # Determine headless mode
@@ -96,11 +97,16 @@ def main():
     if args.verbose:
         set_setting('debug.verbose', True)
     
-    # Generate email
+    # Generate email using GPTMail
     if args.email:
         email = args.email
     else:
-        email = generate_human_email(args.domain)
+        # 使用 GPTMail 生成临时邮箱
+        email = gptmail_generate_email(args.prefix)
+        if not email:
+            progress(8, 8, "Error", "Failed to generate GPTMail email")
+            print("\n❌ ERROR: Failed to generate GPTMail email")
+            return {'success': False, 'error': 'Failed to generate GPTMail email'}
     
     progress(1, 8, "Initializing", f"Email: {email}")
     
