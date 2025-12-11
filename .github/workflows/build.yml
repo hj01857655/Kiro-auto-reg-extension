@@ -2,11 +2,11 @@ name: Build VSIX
 
 on:
   push:
-    branches: [main, master]
+    branches: [dev]
     tags:
       - "v*"
   pull_request:
-    branches: [main, master]
+    branches: [dev]
   workflow_dispatch:
 
 permissions:
