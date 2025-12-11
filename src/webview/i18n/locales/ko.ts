@@ -24,6 +24,7 @@ export const ko: Translations = {
   exportTip: '모든 계정을 JSON 파일로 저장',
   running: '실행 중...',
   all: '전체',
+  hideExpired: '만료됨 숨기기',
   byEmail: '이메일순',
   byUsage: '사용량순',
   byExpiry: '만료일순',

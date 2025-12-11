@@ -275,6 +275,9 @@ class KiroAccountsProvider implements vscode.WebviewViewProvider {
           this._context.globalState.update('language', msg.language);
           this.refresh();
           break;
+        case 'setHideExpired':
+          this._context.globalState.update('hideExpired', msg.hide);
+          break;
         case 'openUrl':
           vscode.env.openExternal(vscode.Uri.parse(msg.url));
           break;
@@ -382,7 +385,18 @@ class KiroAccountsProvider implements vscode.WebviewViewProvider {
       };
       
       // Render immediately with basic data
-      this._view.webview.html = generateWebviewHtml(this._accounts, autoSwitchEnabled, autoRegStatus, undefined, this._kiroUsage, autoRegSettings, this._consoleLogs, this._version, this._language);
+      const hideExpired = this._context.globalState.get<boolean>('hideExpired', false);
+      this._view.webview.html = generateWebviewHtml({
+        accounts: this._accounts,
+        autoSwitchEnabled,
+        autoRegStatus,
+        kiroUsage: this._kiroUsage,
+        autoRegSettings,
+        consoleLogs: this._consoleLogs,
+        version: this._version,
+        language: this._language,
+        hideExpired,
+      });
       
       // Then load usage for all accounts in background
       this.loadAllUsage();
@@ -405,7 +419,18 @@ class KiroAccountsProvider implements vscode.WebviewViewProvider {
         screenshotsOnError: config.get<boolean>('debug.screenshotsOnError', true)
       };
       
-      this._view.webview.html = generateWebviewHtml(this._accounts, autoSwitchEnabled, autoRegStatus, undefined, this._kiroUsage, autoRegSettings, this._consoleLogs, this._version, this._language);
+      const hideExpired = this._context.globalState.get<boolean>('hideExpired', false);
+      this._view.webview.html = generateWebviewHtml({
+        accounts: this._accounts,
+        autoSwitchEnabled,
+        autoRegStatus,
+        kiroUsage: this._kiroUsage,
+        autoRegSettings,
+        consoleLogs: this._consoleLogs,
+        version: this._version,
+        language: this._language,
+        hideExpired,
+      });
     } catch (err) {
       console.error('Failed to load all usage:', err);
     }
@@ -435,7 +460,18 @@ class KiroAccountsProvider implements vscode.WebviewViewProvider {
             screenshotsOnError: config.get<boolean>('debug.screenshotsOnError', true)
           };
           
-          this._view.webview.html = generateWebviewHtml(this._accounts, autoSwitchEnabled, autoRegStatus, undefined, this._kiroUsage, autoRegSettings, this._consoleLogs, this._version, this._language);
+          const hideExpired = this._context.globalState.get<boolean>('hideExpired', false);
+          this._view.webview.html = generateWebviewHtml({
+            accounts: this._accounts,
+            autoSwitchEnabled,
+            autoRegStatus,
+            kiroUsage: this._kiroUsage,
+            autoRegSettings,
+            consoleLogs: this._consoleLogs,
+            version: this._version,
+            language: this._language,
+            hideExpired,
+          });
         }
       }
     } catch (err) {

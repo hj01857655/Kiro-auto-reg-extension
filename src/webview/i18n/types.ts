@@ -33,6 +33,7 @@ export interface Translations {
   running: string;
   // Filters
   all: string;
+  hideExpired: string;
   byEmail: string;
   byUsage: string;
   byExpiry: string;

@@ -24,6 +24,7 @@ export const ja: Translations = {
   exportTip: 'すべてのアカウントをJSONファイルに保存',
   running: '実行中...',
   all: 'すべて',
+  hideExpired: '期限切れを非表示',
   byEmail: 'メール順',
   byUsage: '使用量順',
   byExpiry: '有効期限順',

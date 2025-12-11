@@ -24,6 +24,7 @@ export const zh: Translations = {
   exportTip: '将所有账户保存到 JSON 文件',
   running: '运行中...',
   all: '全部',
+  hideExpired: '隐藏过期',
   byEmail: '按邮箱',
   byUsage: '按使用量',
   byExpiry: '按到期时间',

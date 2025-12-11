@@ -24,6 +24,7 @@ export const de: Translations = {
   exportTip: 'Alle Konten in JSON-Datei speichern',
   running: 'Läuft...',
   all: 'Alle',
+  hideExpired: 'Abgelaufene ausblenden',
   byEmail: 'Nach E-Mail',
   byUsage: 'Nach Nutzung',
   byExpiry: 'Nach Ablauf',

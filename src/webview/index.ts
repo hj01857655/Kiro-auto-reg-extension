@@ -36,6 +36,7 @@ export interface WebviewProps {
   version?: string;
   language?: Language;
   availableUpdate?: { version: string; url: string } | null;
+  hideExpired?: boolean;
 }
 
 function parseAutoRegStatus(status: string): { progress: RegProgress | null; statusText: string; isRunning: boolean } {
@@ -97,6 +98,7 @@ export function generateWebviewHtml(
   const { accounts } = props;
   const EXTENSION_VERSION = props.version || 'dev';
   const lang = props.language || 'en';
+  const hideExpired = props.hideExpired || false;
   
   // Get translations from centralized i18n
   const t = getTranslations(lang);
@@ -179,6 +181,10 @@ export function generateWebviewHtml(
         <button class="filter-tab" onclick="filterAccounts('valid')">${t.validFilter}</button>
         <button class="filter-tab" onclick="filterAccounts('expired')">${t.expiredFilter}</button>
       </div>
+      <label class="hide-expired-toggle">
+        <input type="checkbox" id="hideExpiredCheckbox" ${hideExpired ? 'checked' : ''} onchange="toggleHideExpired(this.checked)">
+        <span>${t.hideExpired}</span>
+      </label>
       <select class="sort-select" onchange="sortAccounts(this.value)">
         <option value="email">${t.byEmail}</option>
         <option value="usage">${t.byUsage}</option>
@@ -279,6 +285,9 @@ function getStyles(): string {
     .filter-tabs { display: flex; gap: 2px; background: var(--bg-elevated); padding: 2px; border-radius: var(--radius-sm); }
     .filter-tab { padding: 5px 10px; font-size: 10px; font-weight: 600; background: transparent; border: none; border-radius: 3px; cursor: pointer; color: var(--muted); transition: all var(--transition-fast); }
     .filter-tab:hover { color: var(--vscode-foreground); } .filter-tab.active { background: var(--accent-dim); color: var(--accent); }
+    .hide-expired-toggle { display: flex; align-items: center; gap: 6px; font-size: 10px; color: var(--muted); cursor: pointer; user-select: none; }
+    .hide-expired-toggle input { width: 14px; height: 14px; accent-color: var(--accent); cursor: pointer; }
+    .hide-expired-toggle:hover { color: var(--vscode-foreground); }
     .sort-select { padding: 5px 8px; font-size: 10px; font-family: inherit; font-weight: 500; background: var(--vscode-dropdown-background); color: var(--vscode-dropdown-foreground); border: 1px solid var(--border-medium); border-radius: var(--radius-sm); cursor: pointer; }
     .list { padding: 8px 10px 80px; } .list-empty { text-align: center; padding: 40px 20px; color: var(--muted); }
     .list-empty-icon { font-size: 32px; margin-bottom: 12px; opacity: 0.5; } .list-empty-text { font-size: 12px; margin-bottom: 16px; }

@@ -24,6 +24,7 @@ export const hi: Translations = {
   exportTip: 'सभी खातों को JSON फ़ाइल में सहेजें',
   running: 'चल रहा है...',
   all: 'सभी',
+  hideExpired: 'समाप्त छुपाएं',
   byEmail: 'ईमेल द्वारा',
   byUsage: 'उपयोग द्वारा',
   byExpiry: 'समाप्ति द्वारा',
